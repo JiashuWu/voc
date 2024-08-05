@@ -3,83 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Entry Drawer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Excel Draw</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            padding: 20px;
         }
-        #results {
+        #result {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Random Entry Drawer</h1>
-    <button id="drawButton">Draw Random Entries</button>
-    <div id="results"></div>
-    
+    <h1>Excel Entry Drawer</h1>
+
+    <label for="variable">Select Variable:</label>
+    <select id="variable">
+        <option value="EN">EN</option>
+        <option value="FR">FR</option>
+        <option value="ES">ES</option>
+        <option value="JP">JP</option>
+    </select>
+
+    <br><br>
+
+    <label for="fileInput">Upload Excel File:</label>
+    <input type="file" id="fileInput" accept=".xlsx" />
+
+    <br><br>
+
+    <button id="drawButton">Draw Entries</button>
+
+    <div id="result"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script>
-        $(document).ready(function() {
-            const fileName = 'https://github.com/JiashuWu/voc/blob/main/voc.xlsx'; // Your Excel file name
-
-            function readExcel(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const json = XLSX.utils.sheet_to_json(firstSheet);
-                        resolve(json);
-                    };
-                    reader.onerror = reject;
-                    reader.readAsArrayBuffer(file);
-                });
+        document.getElementById('drawButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput').files[0];
+            const variable = document.getElementById('variable').value;
+            if (!fileInput) {
+                alert('Please upload an Excel file.');
+                return;
             }
 
-            async function drawEntries() {
-                try {
-                    const response = await fetch(fileName);
-                    const blob = await response.blob();
-                    const entries = await readExcel(blob);
-                    const filteredEntries = entries.filter(entry => entry['Field1'] === 'EN'); // Adjust field name as needed
-                    if (filteredEntries.length < 10) {
-                        alert('Not enough entries to draw from.');
-                        return;
-                    }
-                    const randomEntries = [];
-                    while (randomEntries.length < 10) {
-                        const randomIndex = Math.floor(Math.random() * filteredEntries.length);
-                        if (!randomEntries.includes(filteredEntries[randomIndex])) {
-                            randomEntries.push(filteredEntries[randomIndex]);
-                        }
-                    }
-                    displayResults(randomEntries);
-                } catch (error) {
-                    console.error('Error reading the Excel file:', error);
-                }
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                
+                // Assuming the first field is in column A (index 0)
+                const filteredEntries = json.filter(row => row[0] === variable);
 
-            function displayResults(entries) {
-                const resultsDiv = $('#results');
-                resultsDiv.empty();
-                if (entries.length === 0) {
-                    resultsDiv.append('<p>No entries found.</p>');
+                if (filteredEntries.length === 0) {
+                    document.getElementById('result').innerText = 'No entries found for the selected variable.';
                     return;
                 }
-                const ul = $('<ul></ul>');
-                entries.forEach(entry => {
-                    ul.append($('<li></li>').text(JSON.stringify(entry)));
-                });
-                resultsDiv.append(ul);
-            }
 
-            $('#drawButton').click(function() {
-                drawEntries();
-            });
+                const sampleSize = Math.min(10, filteredEntries.length);
+                const randomEntries = [];
+                const usedIndices = new Set();
+
+                while (randomEntries.length < sampleSize) {
+                    const index = Math.floor(Math.random() * filteredEntries.length);
+                    if (!usedIndices.has(index)) {
+                        usedIndices.add(index);
+                        randomEntries.push(filteredEntries[index]);
+                    }
+                }
+
+                let resultHtml = '<h2>Randomly Drawn Entries:</h2><ul>';
+                randomEntries.forEach(entry => {
+                    resultHtml += `<li>${entry.join(', ')}</li>`;
+                });
+                resultHtml += '</ul>';
+                document.getElementById('result').innerHTML = resultHtml;
+            };
+            reader.readAsArrayBuffer(fileInput);
         });
     </script>
 </body>
