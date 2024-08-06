@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             entryDiv.className = 'entry';
             entryDiv.innerHTML = `
-                <span class="field">${entry[2]}</span>
+                <span class="field">${entry[2]}</span><br/>
                 <span class="field ${isWhite ? 'white' : 'black'}">${entry[3]}</span>
             `;
             entriesContainer.appendChild(entryDiv);
