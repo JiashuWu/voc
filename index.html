@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Entry Generator</title>
+    <title>VOC</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,25 +20,64 @@
         .black {
             color: black;
         }
+        .button-23 {
+          background-color: #FFFFFF;
+          border: 1px solid #222222;
+          border-radius: 8px;
+          box-sizing: border-box;
+          color: #222222;
+          cursor: pointer;
+          display: inline-block;
+          font-family: Circular,-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 20px;
+          margin: 0;
+          outline: none;
+          padding: 3px 6px;
+          position: relative;
+          text-align: center;
+          text-decoration: none;
+          touch-action: manipulation;
+          transition: box-shadow .2s,-ms-transform .1s,-webkit-transform .1s,transform .1s;
+          user-select: none;
+          -webkit-user-select: none;
+          width: auto;
+        }
+
+        .button-23:focus-visible {
+          box-shadow: #222222 0 0 0 2px, rgba(255, 255, 255, 0.8) 0 0 0 4px;
+          transition: box-shadow .2s;
+        }
+
+        .button-23:active {
+          background-color: #F7F7F7;
+          border-color: #000000;
+          transform: scale(.96);
+        }
+
+        .button-23:disabled {
+          border-color: #DDDDDD;
+          color: #DDDDDD;
+          cursor: not-allowed;
+          opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <h1>Random Entry Generator</h1>
-    <input type="file" id="fileInput" />
-    <br/><br/>
-    <label for="variableSelect">Select VARIABLE: </label>
-    <select id="variableSelect">
+    <input type="file" id="fileInput" class="button-23"/>
+    <label for="variableSelect">Lang: </label>
+    <select id="variableSelect" class="button-23">
         <!-- Options will be populated dynamically -->
         <option value="EN">EN</option>
         <option value="FR">FR</option>
         <option value="ES">ES</option>
         <option value="JP">JP</option>
     </select>
+    <button id="generateBtn" class="button-23">GENERATE</button>
+    <button id="colourBtn" class="button-23">COLOUR</button>
     <br/><br/>
-    <button id="generateBtn">GENERATE</button>
-    <button id="colourBtn">COLOUR</button>
-    <br/><br/>
-    <div id="entriesContainer"></div>
+    <div id="entriesContainer" style="font-size: 20px"></div>
 
     <script src="xlsx.full.min.js"></script>
     <script src="script.js"></script>
