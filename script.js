@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (filteredEntries.length > 10) {
             filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, 10);
+        } else {
+            alert('File is not uploaded or not enough entries match the selected variable.');
+            return;
         }
 
         displayEntries();
@@ -48,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
         entriesContainer.innerHTML = '';
         filteredEntries.forEach(entry => {
             const entryDiv = document.createElement('div');
+            if (!isWhite) {
+                isWhite = !isWhite
+            }
             entryDiv.className = 'entry';
             entryDiv.innerHTML = `
                 <span class="field">${entry[2]}</span>

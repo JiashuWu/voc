@@ -3,86 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Draw</title>
+    <title>Random Entry Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
         }
-        #result {
-            margin-top: 20px;
+        .entry {
+            margin: 10px 0;
+        }
+        .field {
+            padding: 5px;
+        }
+        .white {
+            color: white;
+        }
+        .black {
+            color: black;
         }
     </style>
 </head>
 <body>
-    <h1>Excel Entry Drawer</h1>
-
-    <label for="variable">Select Variable:</label>
-    <select id="variable">
+    <h1>Random Entry Generator</h1>
+    <input type="file" id="fileInput" />
+    <br/><br/>
+    <label for="variableSelect">Select VARIABLE: </label>
+    <select id="variableSelect">
+        <!-- Options will be populated dynamically -->
         <option value="EN">EN</option>
         <option value="FR">FR</option>
         <option value="ES">ES</option>
         <option value="JP">JP</option>
     </select>
+    <br/><br/>
+    <button id="generateBtn">GENERATE</button>
+    <button id="colourBtn">COLOUR</button>
+    <br/><br/>
+    <div id="entriesContainer"></div>
 
-    <br><br>
-
-    <label for="fileInput">Upload Excel File:</label>
-    <input type="file" id="fileInput" accept=".xlsx" />
-
-    <br><br>
-
-    <button id="drawButton">Draw Entries</button>
-
-    <div id="result"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script>
-        document.getElementById('drawButton').addEventListener('click', function() {
-            const fileInput = document.getElementById('fileInput').files[0];
-            const variable = document.getElementById('variable').value;
-            if (!fileInput) {
-                alert('Please upload an Excel file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
-                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                
-                // Assuming the first field is in column A (index 0)
-                const filteredEntries = json.filter(row => row[0] === variable);
-
-                if (filteredEntries.length === 0) {
-                    document.getElementById('result').innerText = 'No entries found for the selected variable.';
-                    return;
-                }
-
-                const sampleSize = Math.min(10, filteredEntries.length);
-                const randomEntries = [];
-                const usedIndices = new Set();
-
-                while (randomEntries.length < sampleSize) {
-                    const index = Math.floor(Math.random() * filteredEntries.length);
-                    if (!usedIndices.has(index)) {
-                        usedIndices.add(index);
-                        randomEntries.push(filteredEntries[index]);
-                    }
-                }
-
-                let resultHtml = '<h2>Randomly Drawn Entries:</h2><ul>';
-                randomEntries.forEach(entry => {
-                    resultHtml += `<li>${entry.join(', ')}</li>`;
-                });
-                resultHtml += '</ul>';
-                document.getElementById('result').innerHTML = resultHtml;
-            };
-            reader.readAsArrayBuffer(fileInput);
-        });
-    </script>
+    <script src="xlsx.full.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
