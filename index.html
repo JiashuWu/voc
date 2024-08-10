@@ -74,6 +74,10 @@
         <option value="FR">FR</option>
         <option value="ES">ES</option>
         <option value="JP">JP</option>
+        <option value="CN-EN">CN-EN</option>
+        <option value="CN-FR">CN-FR</option>
+        <option value="CN-ES">CN-ES</option>
+        <option value="CN-JP">CN-JP</option>
     </select>
     <button id="generateBtn" class="button-23">GENERATE</button>
     <button id="colourBtn" class="button-23">COLOUR</button>
@@ -115,12 +119,34 @@
 
     function populateVariableSelect() {
         const variables = [...new Set(entries.map(entry => entry[1]))];
+        if (variables.includes("EN")) {
+            variables.push("CN-EN");
+        }
+        if (variables.includes("FR")) {
+            variables.push("CN-FR");
+        }
+        if (variables.includes("ES")) {
+            variables.push("CN-ES");
+        }
+        if (variables.includes("JP")) {
+            variables.push("CN-JP");
+        }
         variableSelect.innerHTML = variables.map(variable => `<option value="${variable}">${variable}</option>`).join('');
     }
 
     function generateEntries() {
         const selectedVariable = variableSelect.value;
-        filteredEntries = entries.filter(entry => entry[1] === selectedVariable);
+        let selectedVariableLang = selectedVariable;
+        if (selectedVariable === "CN-EN") {
+            selectedVariableLang = "EN";
+        } else if (selectedVariable === "CN-FR") {
+            selectedVariableLang = "FR";
+        } else if (selectedVariable === "CN-ES") {
+            selectedVariableLang = "ES";
+        } else if (selectedVariable === "CN-JP") {
+            selectedVariableLang = "JP";
+        }
+        filteredEntries = entries.filter(entry => entry[1] === selectedVariableLang);
 
         if (filteredEntries.length > 10) {
             filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -140,10 +166,19 @@
                 isWhite = !isWhite
             }
             entryDiv.className = 'entry';
-            entryDiv.innerHTML = `
+            const selectedVariable = variableSelect.value;
+            const chineseArray = ["CN-EN", "CN-FR", "CN-ES", "CN-JP"];
+            if (chineseArray.includes(selectedVariable)) {
+                entryDiv.innerHTML = `
+                <span class="field">${entry[3]}</span>
+                <span class="field ${isWhite ? 'white' : 'black'}">${entry[2]}</span>
+                `;
+            } else {
+                entryDiv.innerHTML = `
                 <span class="field">${entry[2]}</span>
                 <span class="field ${isWhite ? 'white' : 'black'}">${entry[3]}</span>
-            `;
+                `;
+            }
             entriesContainer.appendChild(entryDiv);
         });
     }
