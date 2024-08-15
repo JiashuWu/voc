@@ -65,7 +65,7 @@
     </style>
 </head>
 <body>
-    <input type="file" id="fileInput" class="button-23" style="width: 260px"/>
+    <input type="file" id="fileInput" class="button-23" style="width: 260px" accept=".xlsx,.xls"/>
     <br/><br/>
     <label for="variableSelect">Lang: </label>
     <select id="variableSelect" class="button-23">
@@ -78,6 +78,11 @@
         <option value="CN-FR">CN-FR</option>
         <option value="CN-ES">CN-ES</option>
         <option value="CN-JP">CN-JP</option>
+    </select>
+    <select id="numberSelect" class="button-23">
+        <!-- Options will be populated dynamically -->
+        <option value="10">10</option>
+        <option value="5">5</option>
     </select>
     <button id="generateBtn" class="button-23">GENERATE</button>
     <button id="colourBtn" class="button-23">COLOUR</button>
@@ -136,6 +141,8 @@
 
     function generateEntries() {
         const selectedVariable = variableSelect.value;
+        const selectedNumber = numberSelect.value;
+        console.log("Generate Number:", selectedNumber);
         let selectedVariableLang = selectedVariable;
         if (selectedVariable === "CN-EN") {
             selectedVariableLang = "EN";
@@ -146,10 +153,11 @@
         } else if (selectedVariable === "CN-JP") {
             selectedVariableLang = "JP";
         }
+        console.log("Generate Language:", selectedVariableLang)
         filteredEntries = entries.filter(entry => entry[1] === selectedVariableLang);
 
-        if (filteredEntries.length > 10) {
-            filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, 10);
+        if (filteredEntries.length > selectedNumber) {
+            filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, selectedNumber);
         } else {
             alert('File is not uploaded or not enough entries match the selected variable.');
             return;
