@@ -79,10 +79,13 @@
         <option value="CN-ES">CN-ES</option>
         <option value="CN-JP">CN-JP</option>
     </select>
-    <select id="numberSelect" class="button-23">
+    <select id="numberSelector" class="button-23">
         <!-- Options will be populated dynamically -->
         <option value="10">10</option>
         <option value="5">5</option>
+        <option value="All Random">All Random</option>
+        <option value="All Time">All Time</option>
+        <option value="All Alpha">All Alpha</option>
     </select>
     <button id="generateBtn" class="button-23">GENERATE</button>
     <button id="colourBtn" class="button-23">COLOUR</button>
@@ -139,10 +142,21 @@
         variableSelect.innerHTML = variables.map(variable => `<option value="${variable}">${variable}</option>`).join('');
     }
 
+    function shuffleSubarrays(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function sortByAlpha(arr) {
+      arr.sort((a, b) => a[2].localeCompare(b[2]));
+    }
+
     function generateEntries() {
         const selectedVariable = variableSelect.value;
-        const selectedNumber = numberSelect.value;
-        console.log("Generate Number:", selectedNumber);
+        const selectedNumber = numberSelector.value;
         let selectedVariableLang = selectedVariable;
         if (selectedVariable === "CN-EN") {
             selectedVariableLang = "EN";
@@ -155,12 +169,22 @@
         }
         console.log("Generate Language:", selectedVariableLang)
         filteredEntries = entries.filter(entry => entry[1] === selectedVariableLang);
-
-        if (filteredEntries.length > selectedNumber) {
-            filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, selectedNumber);
-        } else {
-            alert('File is not uploaded or not enough entries match the selected variable.');
-            return;
+        if (selectedNumber === "5" || selectedNumber === "10") {
+            if (filteredEntries.length >= selectedNumber) {
+                filteredEntries = filteredEntries.sort(() => 0.5 - Math.random()).slice(0, selectedNumber);
+                console.log("Generate Number:", selectedNumber);
+            } else {
+                alert('File is not uploaded or not enough entries match the selected variable.');
+                return;
+            }
+        } else if (selectedNumber === "All Time") {
+            console.log("Generate All Time:", filteredEntries.length);
+        } else if (selectedNumber === "All Random") {
+            console.log("Generate All Random:", filteredEntries.length);
+            filteredEntries = shuffleSubarrays(filteredEntries);
+        } else if (selectedNumber === "All Alpha") {
+            console.log("Generate All Alpha:", filteredEntries.length);
+            sortByAlpha(filteredEntries);
         }
 
         displayEntries();
