@@ -85,6 +85,7 @@
         <option value="5">5</option>
         <option value="All Random">All Random</option>
         <option value="All Time">All Time</option>
+        <option value="All Time 10">All Time 10</option>
         <option value="All Alpha">All Alpha</option>
     </select>
     <button id="generateBtn" class="button-23">Generate</button>
@@ -97,8 +98,11 @@
         <option value="pink">Pink</option>
         <option value="purple">Purple</option>
     </select> 
+    <button id="printBtn" class="button-23">Print PDF</button>
     <br/><br/>
     <div id="entriesContainer" style="font-size: 20px"></div>
+    <br/><br/>
+    <div id="timeField"=></div>
 
     <!--<script src="xlsx.full.min.js"></script>
     <script src="script.js"></script>-->
@@ -110,6 +114,7 @@
     const variableSelect = document.getElementById('variableSelect');
     const entriesContainer = document.getElementById('entriesContainer');
     const colourSelector = document.getElementById('colourSelector');
+    const printBtn = document.getElementById('printBtn');
     let entries = [];
     let filteredEntries = [];
     let isWhite = true;
@@ -118,6 +123,7 @@
     generateBtn.addEventListener('click', generateEntries);
     colourBtn.addEventListener('click', toggleColour);
     colourSelector.addEventListener('change', setColour);
+    printBtn.addEventListener('click', printPDF);
 
     function handleFile(event) {
         const file = event.target.files[0];
@@ -189,6 +195,14 @@
             }
         } else if (selectedNumber === "All Time") {
             console.log("Generate All Time:", filteredEntries.length);
+        } else if (selectedNumber === "All Time 10") {
+            console.log("Generate All Time 10: 10")
+            var starting = Math.floor(Math.random() * filteredEntries.length);
+            var ending = starting + 10;
+            if (ending > filteredEntries.length) {
+                ending = filteredEntries.length;
+            }
+            filteredEntries = filteredEntries.slice(starting, starting + 10);
         } else if (selectedNumber === "All Random") {
             console.log("Generate All Random:", filteredEntries.length);
             filteredEntries = shuffleSubarrays(filteredEntries);
@@ -198,6 +212,7 @@
         }
 
         displayEntries();
+        showTime();
     }
 
     function displayEntries() {
@@ -250,6 +265,15 @@
         } else if (selectedColour === "purple") {
             fields.forEach(field => {field.style.color = "#9575CD"});
         }
+    }
+
+    function showTime() {
+        const now = new Date();
+        document.getElementById('timeField').textContent = "Time: " + now.toLocaleString();
+    }
+
+    function printPDF() {
+        window.print();
     }
 });
     </script>
